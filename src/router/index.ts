@@ -1,20 +1,20 @@
-import { createMemoryHistory, createRouter } from "vue-router";
-import MainView from "../views/MainView.vue";
+import { createMemoryHistory, createRouter } from 'vue-router'
+import MainView from '../views/MainView.vue'
 
 const routes = [
     {
-        path: "/",
+        path: '/',
         component: MainView,
     },
     {
-        path: "/total",
-        component: () => import("../views/TotalView.vue"),
+        path: '/total',
+        component: () => import('../views/ArchiveView.vue'),
     },
-];
+]
 
 const router = createRouter({
     history: createMemoryHistory(),
     routes,
-});
+})
 
-export default router;
+export default router

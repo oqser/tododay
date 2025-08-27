@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import type { Todo } from "@/types/Todo";
-import ActionButtons from "./ActionButtons.vue";
-import { computed, ref } from "vue";
-import { useDeleteTodo, useUpdateTodo } from "../composables/useTodos";
-import { formatDate } from "@/utils/dateFormatter";
-import { useConfirmDialog } from "../../components/composables/useConfirmDialog";
-import { useCloseActions } from "../../utils/useCloseActions";
+import type { Todo } from '@/types/Todo'
+import ActionButtons from './ActionButtons.vue'
+import { computed, ref } from 'vue'
+import { useDeleteTodo, useUpdateTodo } from '../composables/useTodos'
+import { formatDate } from '@/utils/dateFormatter'
+import { useConfirmDialog } from '../../components/composables/useConfirmDialog'
+import { useCloseActions } from '../../utils/useCloseActions'
 
 const props = defineProps<{
-    todo: Todo;
-}>();
+    todo: Todo
+}>()
 
-const isEditing = ref(false);
-const editFormRef = ref<HTMLFormElement | null>(null);
+const isEditing = ref(false)
+const editFormRef = ref<HTMLFormElement | null>(null)
 const formState = ref({
     title: props.todo.title,
     date: props.todo.date,
-});
+})
 
-const { open } = useConfirmDialog();
-const update = useUpdateTodo();
-const remove = useDeleteTodo();
+const { open } = useConfirmDialog()
+const update = useUpdateTodo()
+const remove = useDeleteTodo()
 
 // update
 const handleUpdate = () => {
@@ -31,42 +31,50 @@ const handleUpdate = () => {
         update.mutate({
             id: props.todo.id,
             ...formState.value,
-        });
+        })
     }
-    isEditing.value = false;
-};
+    isEditing.value = false
+}
 
 // delete
 const handleRemove = async () => {
     const confirmed = await open({
-        title: "Удаление элемента",
+        title: 'Удаление элемента',
         message: `Вы уверены, что хотите удалить ${props.todo.title}? Это действие нельзя отменить.`,
-        confirmText: "Удалить",
-        cancelText: "Отмена",
-        variant: "danger",
-    });
+        confirmText: 'Удалить',
+        cancelText: 'Отмена',
+        variant: 'danger',
+    })
 
     if (confirmed) {
         remove.mutate({
             id: props.todo.id,
             title: props.todo.title,
-        });
+        })
     }
-};
+}
+
+//archive
+const handleArchive = () => {
+    update.mutate({
+        id: props.todo.id,
+        archive: !props.todo.archive,
+    })
+}
 
 // cancel
 const resetForm = () => {
-    formState.value = { ...props.todo };
-};
+    formState.value = { ...props.todo }
+}
 const cancelEditing = () => {
-    if (!isEditing.value) return;
-    resetForm();
-    isEditing.value = false;
-};
-useCloseActions(isEditing, cancelEditing, editFormRef);
+    if (!isEditing.value) return
+    resetForm()
+    isEditing.value = false
+}
+useCloseActions(isEditing, cancelEditing, editFormRef)
 
-const fullDate = computed(() => formatDate(props.todo.date, "DD.MM.YYYY"));
-const longDate = computed(() => formatDate(props.todo.date, "DD.month"));
+const fullDate = computed(() => formatDate(props.todo.date, 'DD.MM.YYYY'))
+const longDate = computed(() => formatDate(props.todo.date, 'DD.month'))
 </script>
 <template>
     <div class="item">
@@ -102,6 +110,7 @@ const longDate = computed(() => formatDate(props.todo.date, "DD.month"));
                 @edit="isEditing = true"
                 @cancel="cancelEditing"
                 @delete="handleRemove"
+                @done="handleArchive"
             />
         </div>
     </div>

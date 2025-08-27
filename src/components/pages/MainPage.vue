@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import TodoForm from "../TodoForm/TodoForm.vue";
-import TodoItem from "../TodoList/TodoItem.vue";
-import { useTodos } from "../composables/useTodos";
+import { computed, ref } from 'vue'
+import TodoForm from '../TodoForm/TodoForm.vue'
+import TodoItem from '../TodoList/TodoItem.vue'
+import { useTodos } from '../composables/useTodos'
 
-const currentPage = ref(1);
-const itemsPerPage = ref(10);
-const currentSort = ref("-date");
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+const currentSort = ref('-date')
 
-const { data: todosData } = useTodos(currentPage, itemsPerPage, currentSort);
+const { data: todosData } = useTodos(currentPage, itemsPerPage, currentSort)
 
 const todos = computed(() => {
-    if (!todosData.value) return [];
-    return [...todosData.value.items];
-});
+    if (!todosData.value) return []
+    return [...todosData.value.items]
+})
+
+const incompleteTodos = computed(() => {
+    return todos.value.filter((todo) => !todo.archive)
+})
 
 const paginationMeta = computed(
     () =>
@@ -24,22 +28,26 @@ const paginationMeta = computed(
             per_page: itemsPerPage.value,
             remaining_count: 0,
         }
-);
+)
 
 const handlePageChange = (page: number) => {
-    currentPage.value = page;
-};
+    currentPage.value = page
+}
 
 const handlePerPageChange = (perPage: number) => {
-    itemsPerPage.value = perPage;
-};
+    itemsPerPage.value = perPage
+}
 </script>
 
 <template>
     <div class="content">
         <TodoForm />
         <div class="list">
-            <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" />
+            <TodoItem
+                v-for="todo in incompleteTodos"
+                :key="todo.id"
+                :todo="todo"
+            />
         </div>
     </div>
 </template>

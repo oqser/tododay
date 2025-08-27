@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useCreateTodo } from "../composables/useTodos";
+import { ref } from 'vue'
+import { useCreateTodo } from '../composables/useTodos'
 
-const newTodoTitle = ref("");
-const isoDate = new Date().toISOString().slice(0, 10);
-const newTodoDate = ref(isoDate);
+const newTodoTitle = ref('')
+const isoDate = new Date().toISOString().slice(0, 10)
+const newTodoDate = ref(isoDate)
 
-const create = useCreateTodo();
+const create = useCreateTodo()
 
 const handleCreate = () => {
     create.mutate({
         title: newTodoTitle.value,
         date: newTodoDate.value,
+        archive: false,
     }),
-        (newTodoTitle.value = ""),
-        (newTodoDate.value = isoDate);
-};
+        (newTodoTitle.value = ''),
+        (newTodoDate.value = isoDate)
+}
 </script>
 
 <template>
@@ -34,7 +35,7 @@ const handleCreate = () => {
             @click="handleCreate"
             :disabled="!newTodoTitle.trim()"
         >
-            Создать
+            Добавить
         </button>
     </form>
 </template>
