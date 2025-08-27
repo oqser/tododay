@@ -13,7 +13,7 @@
                 active-class="nav-link--active"
                 to="/total"
             >
-                Все задачи
+                Архив
             </router-link>
         </nav>
     </header>

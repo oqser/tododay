@@ -86,9 +86,13 @@ const actionButtons = computed<ActionButton[]>(() =>
 
 <style scoped>
 button {
+    display: flex;
+    align-items: center;
     cursor: pointer;
     border: none;
     background-color: inherit;
+    padding: 0;
+    margin: 0;
 }
 .pi {
     font-size: 1rem;

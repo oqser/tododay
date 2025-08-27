@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import Header from "./components/Header/Header.vue";
+import { provide } from "vue";
+import ConfirmDialog from "./components/ui/ConfirmDialog.vue";
+import { useConfirmDialogProvider } from "./components/composables/useConfirmDialog";
+
+useConfirmDialogProvider();
 </script>
 
 <template>
@@ -8,6 +13,7 @@ import Header from "./components/Header/Header.vue";
 
         <div class="content">
             <router-view />
+            <ConfirmDialog />
         </div>
     </main>
 </template>

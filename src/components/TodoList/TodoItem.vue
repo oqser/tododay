@@ -4,6 +4,8 @@ import ActionButtons from "./ActionButtons.vue";
 import { computed, ref } from "vue";
 import { useDeleteTodo, useUpdateTodo } from "../composables/useTodos";
 import { formatDate } from "@/utils/dateFormatter";
+import { useConfirmDialog } from "../../components/composables/useConfirmDialog";
+import { useCloseActions } from "../../utils/useCloseActions";
 
 const props = defineProps<{
     todo: Todo;
@@ -16,9 +18,11 @@ const formState = ref({
     date: props.todo.date,
 });
 
+const { open } = useConfirmDialog();
 const update = useUpdateTodo();
 const remove = useDeleteTodo();
 
+// update
 const handleUpdate = () => {
     if (
         formState.value.title !== props.todo.title ||
@@ -32,22 +36,34 @@ const handleUpdate = () => {
     isEditing.value = false;
 };
 
-const handleRemove = () => {
-    remove.mutate({
-        id: props.todo.id,
-        title: props.todo.title,
+// delete
+const handleRemove = async () => {
+    const confirmed = await open({
+        title: "Удаление элемента",
+        message: `Вы уверены, что хотите удалить ${props.todo.title}? Это действие нельзя отменить.`,
+        confirmText: "Удалить",
+        cancelText: "Отмена",
+        variant: "danger",
     });
+
+    if (confirmed) {
+        remove.mutate({
+            id: props.todo.id,
+            title: props.todo.title,
+        });
+    }
 };
 
+// cancel
 const resetForm = () => {
     formState.value = { ...props.todo };
 };
-
 const cancelEditing = () => {
     if (!isEditing.value) return;
     resetForm();
     isEditing.value = false;
 };
+useCloseActions(isEditing, cancelEditing, editFormRef);
 
 const fullDate = computed(() => formatDate(props.todo.date, "DD.MM.YYYY"));
 const longDate = computed(() => formatDate(props.todo.date, "DD.month"));
@@ -96,38 +112,51 @@ const longDate = computed(() => formatDate(props.todo.date, "DD.month"));
     width: 60vh;
     display: flex;
     flex-direction: row;
+    align-items: center;
     gap: 1rem;
     justify-content: space-between;
-    padding: 10px;
+    padding: 6px;
     border: 1px solid #ccc;
-    border-radius: 1rem;
-    background-color: #fff;
+    border-radius: 2rem;
+    background-color: rgba(255, 255, 255, 0.8);
 }
 .todo-view {
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     gap: 1rem;
+    justify-content: space-between;
+    width: 100%;
+    border: 6px solid transparent;
+}
+
+.todo-edit-form {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     justify-content: space-between;
     width: 100%;
 }
-.todo-edit-form {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    justify-content: space-between;
-    width: 100%;
+.todo-edit-form input {
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 1rem;
+    padding: 4px 10px;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+    outline: none;
 }
 
 .action-buttons {
     display: flex;
     flex-direction: row;
-    gap: 0.2rem;
+    gap: 0.5rem;
 }
 .title {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 0.1rem;
 }
 </style>

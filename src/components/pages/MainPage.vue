@@ -61,6 +61,6 @@ const handlePerPageChange = (perPage: number) => {
     background-color: bisque;
     padding: 1rem;
     border: 1px solid #ccc;
-    border-radius: 1rem;
+    border-radius: 2rem;
 }
 </style>
